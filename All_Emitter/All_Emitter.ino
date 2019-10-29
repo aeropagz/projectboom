@@ -6,11 +6,10 @@
 #include "MirfHardwareSpiDriver.h"
 
 Nrf24l Mirf = Nrf24l(10, 9);
-int value1,value2;
 
-byte go [4] = {0x00, 0x00, 0x00, 0xFF}; 
-byte standby [4] = {0x00, 0x00, 0xFF, 0xFF};
-byte ans [4] = {0};
+char standby [16] = "standby"; 
+char go [16] = "GO";
+char ans [16] = "";
 
 int msgSend = 0;
 
@@ -21,9 +20,12 @@ void setup()
     Serial.begin(9600);
     Mirf.spi = &MirfHardwareSpi;
     Mirf.init();
-    //Set your own address (sender address) using 5 characters
-    Mirf.setRADDR((byte *)"ABCDE");
-
+    Mirf.setRADDR((byte *)"ABCDE");         //Set your own address (sender address) using 5 characters
+    
+    
+    
+    
+    
     // set input pin
 
     pinMode(inPin, INPUT);
@@ -55,17 +57,26 @@ void loop()
     
     Serial.print("Send success: ");
     if (msgSend == 1){
-      Serial.println("msg1");
+      Serial.println("standby");
     }
     else if (msgSend == 2) {
-      Serial.println("msg2");
+      Serial.println("GO");
     }
 
-    delay(500);
+    //delay(500);
     ////////////////////////////////////////////////////////////////////////////////////////
     //                                    wait for answer                                 //
     ////////////////////////////////////////////////////////////////////////////////////////
 
+    if (Mirf.dataReady()) {
+          Mirf.getData((byte*)&ans);
+
+          Serial.print("Answer is: ");
+          Serial.print(ans);
+          Serial.println();
+    } 
+
+    delay(1000);
     
     }
 
